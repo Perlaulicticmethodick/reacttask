@@ -1,78 +1,65 @@
-import { useState,useRef,useEffect, use } from 'react';
+import { useState, useRef } from 'react'; // Eliminado 'use' y 'useEffect' que no se usaban
 import './App.css';
 
 function App() {
-  let[name,setName]=useState(" ")
-  let[place,setPlace]=useState(" ")
-  let[prioridad,setPrio]=useState(" ")
+  // 1. Aquí estaba el ERROR PRINCIPAL: Faltaba definir el ref del formulario
+  let formref = useRef(null);
 
-  let nameref=useRef("");
-  let placeref=useRef("");
-  let prioref=useRef(0);
-  let[task,setTask]=useState([
-  {
-    name:"Tarea1",
-    place:"School",
-    priority:0,
+  let [task, setTask] = useState([
+    { name: "Tarea1", place: "School", priority: 0 },
+    { name: "Tarea2", place: "School", priority: 0 },
+  ]);
 
-  },
-  {
-    name:"Tarea2",
-    place:"School",
-    priority:0,
-  },
-])
+  // Función para añadir usando FormData (La que estás usando en el botón)
+  let addtaskformref = (e) => {
+    // 2. Importante: Prevenir que la página se recargue al enviar el form
+    e.preventDefault(); 
 
-  let change=(e)=>{
-    setName(e.currentTarget.value)
-  }
-  let changeplace=(e)=>{
-    setPlace(e.currentTarget.value)
-  }
-  let changeprio=(e)=>{
-    setPrio(parseInt(e.currentTarget.value))
-  }
-  let addtask=()=>{
-    let newtask={
-      name:name,
-      place:place,
-      priority:prioridad,
+    // Verificamos que el ref exista
+    if (formref.current) {
+      let formdata = new FormData(formref.current);
+      
+      let newtask = {
+        name: formdata.get("name"),
+        place: formdata.get("place"),
+        // Convertimos a número porque el input devuelve string
+        priority: parseInt(formdata.get("prio")) || 0, 
+      };
+
+      setTask([...task, newtask]);
+
+      // 3. Opcional: Limpiar el formulario después de añadir
+      formref.current.reset();
     }
-    setTask([...task,newtask])
   }
 
-  let addtaskref=()=>{
-    let newtask={
-      name:nameref.current.value,
-      place:placeref.current.value,
-      priority:prioref.current.value,
-    }
-    setTask([...task,newtask])
-  }
   return (
     <div>
       <h2>ADD TASKS</h2>
-      <input type="text" placeholder='name' onChange={change}></input>
-      <input type="text" placeholder='place' onChange={changeplace}></input>
-      <input type="number" placeholder='prioridad' onChange={changeprio}></input>
-      <button onClick={addtask}>ADD TASK</button>
-
-
-      <h2>ADD TASKS</h2>
-      <input ref={nameref} type="text" placeholder='name' ></input>
-      <input ref={placeref}type="text" placeholder='place' ></input>
-      <input ref={prioref}type="number" placeholder='prioridad' ></input>
-      <button onClick={addtaskref}>ADD TASK</button>
       
-      {task.map(t=>
-         <li>
-          <b>{t.name}</b>
-          <div>prioridad:{t.priority}</div>
-          <div>Lugar:{t.place}</div>
-         </li>)}
+      {/* Vinculamos el ref definido arriba */}
+      <form ref={formref}>
+        <input name="name" type="text" placeholder='name' />
+        <input name="place" type="text" placeholder='place' />
+        <input name="prio" type="number" placeholder='prioridad' />
+        {/* Movi el botón dentro del form para que sea más semántico, 
+            pero cambié onClick para prevenir el submit por defecto */}
+        <button onClick={addtaskformref}>ADD TASK</button>
+      </form>
+
+      {/* 4. Usar <ul> para listas y añadir la "key" */}
+      <ul>
+        {task.map((t, index) => (
+          // React necesita una "key" única para cada elemento de una lista
+          <li key={index}>
+            <b>{t.name}</b>
+            <div>prioridad: {t.priority}</div>
+            <div>Lugar: {t.place}</div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 export default App;
-//codigo jsx entre java y html
