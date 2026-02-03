@@ -5,6 +5,10 @@ function App() {
   let[name,setName]=useState(" ")
   let[place,setPlace]=useState(" ")
   let[prioridad,setPrio]=useState(" ")
+
+  let nameref=useRef("");
+  let placeref=useRef("");
+  let prioref=useRef(0);
   let[task,setTask]=useState([
   {
     name:"Tarea1",
@@ -36,6 +40,15 @@ function App() {
     }
     setTask([...task,newtask])
   }
+
+  let addtaskref=()=>{
+    let newtask={
+      name:nameref.current.value,
+      place:placeref.current.value,
+      priority:prioref.current.value,
+    }
+    setTask([...task,newtask])
+  }
   return (
     <div>
       <h2>ADD TASKS</h2>
@@ -43,6 +56,13 @@ function App() {
       <input type="text" placeholder='place' onChange={changeplace}></input>
       <input type="number" placeholder='prioridad' onChange={changeprio}></input>
       <button onClick={addtask}>ADD TASK</button>
+
+
+      <h2>ADD TASKS</h2>
+      <input ref={nameref} type="text" placeholder='name' ></input>
+      <input ref={placeref}type="text" placeholder='place' ></input>
+      <input ref={prioref}type="number" placeholder='prioridad' ></input>
+      <button onClick={addtaskref}>ADD TASK</button>
       
       {task.map(t=>
          <li>
