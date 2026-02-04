@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'; // Eliminado 'use' y 'useEffect' que no se usaban
 import './App.css';
-
+import Questions from './Components/questions';
+import Player from './Components/player';
 let App =()=>{
   let[points,setpoints]=useState(0)
   
@@ -15,10 +16,16 @@ let App =()=>{
       options:["Madrid","Ponfe","Barcelona"],
       correct:2
     },
+    {
+      text:"¿1+1?",
+      options:["1","3","2"],
+      correct:2
+    },
   ])
   return (
     <div className='App'>
-      <h1>Trivial</h1>
+      <Player points={points}/>
+      <Questions question={questions} setpoints={setpoints} points={points}/>
     </div>
   );
 }
